@@ -211,7 +211,6 @@ public class TeacherController : MonoBehaviour
         {
             var delay = false;
             currentState = State.Idle;
-            Debug.Log("Move to next route");
             transform.position = routesPosition[nextRouteIndex].position;
             transform.localScale = increaseSize ? Vector2.one * sizePerception : originScale;
             if (wait)
@@ -251,7 +250,6 @@ public class TeacherController : MonoBehaviour
     private bool Wait()
     {
         waitCounter += Time.deltaTime;
-        Debug.Log(waitCounter);
         if (waitCounter >= waitTime)
         {
             waitCounter = 0f;
