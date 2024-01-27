@@ -14,6 +14,8 @@ public class TeacherController : MonoBehaviour
     [SerializeField] private float waitTime = 1f;
     [FoldoutGroup("Move Config")]
     [SerializeField] private float sizePerception = 1f;
+    [FoldoutGroup("Move Config")]
+    [SerializeField] private SpriteRenderer sprite;
 
     [FoldoutGroup("Notif Config")]
     [SerializeField] private GameObject notif;
@@ -26,6 +28,7 @@ public class TeacherController : MonoBehaviour
     private Vector2 initialScale;
     private Vector2 initialPosition;
     private Vector2 notifOriginPosition;
+    private float originAlpha = 1f;
     private float moveCounter;
     private float waitCounter;
     private int currentRouteIndex = 0;
@@ -36,10 +39,11 @@ public class TeacherController : MonoBehaviour
 
     private void Start()
     {
-        currentRouteIndex = Random.Range(0, routesPosition.Count);
+        currentRouteIndex = Random.value > 0.5f ? 0 : 2;
         transform.position = routesPosition[currentRouteIndex].position;
         originScale = transform.localScale;
         notifOriginPosition = notif.transform.position;
+        originAlpha = sprite.color.a;
     }
 
     private void Update()
@@ -70,7 +74,7 @@ public class TeacherController : MonoBehaviour
 
                 if (nextRouteIndex == 1)
                 {
-                    MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, true);
+                    MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, true, true);
                 }
 
                 if (nextRouteIndex == 2)
@@ -98,7 +102,7 @@ public class TeacherController : MonoBehaviour
 
                 if (nextRouteIndex == 0)
                 {
-                    MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, false);
+                    MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, false, true);
                 }
                 break;
 
@@ -123,7 +127,7 @@ public class TeacherController : MonoBehaviour
 
                 if (nextRouteIndex == 3)
                 {
-                    MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, true);
+                    MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, true, true);
                 }
 
                 if (nextRouteIndex == 4)
@@ -146,7 +150,7 @@ public class TeacherController : MonoBehaviour
 
                 if (nextRouteIndex == 2)
                 {
-                    MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, false);
+                    MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, false, true);
                 }
                 break;
 
@@ -175,9 +179,9 @@ public class TeacherController : MonoBehaviour
         }
     }
 
-    private void MoveToTargetOnState(int nextRouteIndex, Vector2 initialPosition, Vector2 initialScale, bool wait, bool increaseSize)
+    private void MoveToTargetOnState(int nextRouteIndex, Vector2 initialPosition, Vector2 initialScale, bool wait, bool increaseSize, bool fade = false)
     {
-        if (moveCounter < moveDuration && currentState == State.Move )
+        if (moveCounter < moveDuration && currentState == State.Move)
         {
             transform.position = Vector2.Lerp(initialPosition, routesPosition[nextRouteIndex].position, moveCounter / moveDuration);
             moveCounter += Time.deltaTime;
@@ -186,26 +190,41 @@ public class TeacherController : MonoBehaviour
         if (increaseSize)
         {
             IncreaseSize(moveCounter / moveDuration, initialScale);
+            if (fade)
+            {
+
+                Fade(moveCounter / moveDuration, 1f, 0.5f);
+            }
         }
         else
         {
             DecreaseSize(moveCounter / moveDuration, initialScale);
+
+            if (fade)
+            {
+                Fade(moveCounter / moveDuration, 0.5f, originAlpha);
+            }
+
         }
 
-        if (moveCounter / moveDuration > 1f)
+        if (moveCounter / moveDuration >= 1f)
         {
+            var delay = false;
             currentState = State.Idle;
             Debug.Log("Move to next route");
             transform.position = routesPosition[nextRouteIndex].position;
             transform.localScale = increaseSize ? Vector2.one * sizePerception : originScale;
-            var delay = Wait();
-            if (delay && wait)
+            if (wait)
             {
-                isCalculating = true;
-                moveCounter = 0f;
-                notif.transform.position = new Vector2(notif.transform.position.x, transform.position.y + notifOriginPosition.y);
-                currentRouteIndex = nextRouteIndex;
-                shouldWait = false;
+                delay = Wait();
+                if (delay)
+                {
+                    isCalculating = true;
+                    moveCounter = 0f;
+                    notif.transform.position = new Vector2(notif.transform.position.x, transform.position.y + notifOriginPosition.y);
+                    currentRouteIndex = nextRouteIndex;
+                    shouldWait = false;
+                }
             }
             else if (!wait)
             {
@@ -215,7 +234,7 @@ public class TeacherController : MonoBehaviour
                 currentRouteIndex = nextRouteIndex;
                 shouldWait = false;
             }
-           
+
         }
     }
 
@@ -242,7 +261,11 @@ public class TeacherController : MonoBehaviour
         else
         {
             notif.SetActive(true);
-            NotifMovement();
+            if (!(nextRouteIndex == 1 || nextRouteIndex == 3))
+            {
+
+                NotifMovement();
+            }
             return false;
         }
     }
@@ -251,6 +274,14 @@ public class TeacherController : MonoBehaviour
     {
         float yPos = Mathf.PingPong(Time.time * speed, 1) * range;
         notif.transform.position = new Vector3(notif.transform.position.x, transform.position.y + yPos, notif.transform.position.z);
+    }
+
+    private void Fade(float fadeDuration, float startAlpha, float endAlpha)
+    {
+        float fadeAmount = Mathf.Lerp(startAlpha, endAlpha, fadeDuration);
+        Color spriteColor = sprite.color;
+        spriteColor.a = fadeAmount;
+        sprite.color = spriteColor;
     }
 
     private enum State

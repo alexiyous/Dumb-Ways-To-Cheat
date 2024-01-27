@@ -822,6 +822,8 @@ MonoBehaviour:
   moveDuration: 5
   waitTime: 5
   sizePerception: 7
+  fadeOut: 2
+  sprite: {fileID: 1904263260}
   notif: {fileID: 370200571}
   speed: 4
   range: 2
