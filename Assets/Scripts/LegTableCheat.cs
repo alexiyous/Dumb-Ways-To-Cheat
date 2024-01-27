@@ -63,6 +63,12 @@ public class LegTableCheat : MonoBehaviour
             GameManager.instance.isCheating = false;
             currentFillAmount = fillBar.transform.localScale;
         }
+
+        if (fillBar.transform.localScale.x >= 1f)
+        {
+            GameManager.instance.questTracker += 1; 
+            gameObject.SetActive(false);
+        }
     }
 
     private bool IsMouseInsideSquare(Vector3 mousePosition)

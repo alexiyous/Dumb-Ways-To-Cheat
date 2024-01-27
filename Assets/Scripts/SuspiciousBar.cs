@@ -12,6 +12,11 @@ public class SuspiciousBar : MonoBehaviour
     private void Update()
     {
         BarUpdate(GameManager.instance.detected);
+
+        if (hookProgress >= 1f)
+        {
+            GameManager.instance.Win();
+        }
     }
 
     private void BarUpdate(bool isDetect)

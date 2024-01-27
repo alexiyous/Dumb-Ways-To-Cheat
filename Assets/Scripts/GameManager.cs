@@ -11,6 +11,9 @@ public class GameManager : MonoBehaviour
     public bool isCheating;
     [HideInInspector]
     public bool detected;
+    [HideInInspector]
+    public int questTracker = 0;
+    
 
     private void Awake()
     {
@@ -35,5 +38,15 @@ public class GameManager : MonoBehaviour
         {
             detected = false;
         }
+    }
+
+    public void Win()
+    {
+        Debug.Log("Win");
+    }
+
+    public void Lose()
+    {
+        Debug.Log("Lose");
     }
 }
