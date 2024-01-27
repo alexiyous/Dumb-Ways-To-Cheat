@@ -8,25 +8,21 @@ public class SusBar : MonoBehaviour
 {
     public int maximum;
     public float current;
-    public Image mask;
+    private Image mask;
     public float delay = 3;
     public float timer;
     public float interval;
-    bool Curang = true;
-
+    public bool Curang = false;
     
-   
-
     // Start is called before the first frame update
     void Start()
     {
         
     }
-
     // Update is called once per frame
     void Update()
     {
-        button();
+        button();                       // fungsi yang dipanggil 
         if (Curang == false)
         {
             decrementFill();
@@ -36,18 +32,15 @@ public class SusBar : MonoBehaviour
         {
             incrementFill(1,Curang);
         }
-    
         
     }
-
-    void button()
+    void button() // --> method yang panggil
     {
         if(Input.GetKey(KeyCode.C))
             {
                 Curang = true;
             }
     }
-
     void GetCurrentFill()
     {
         float fillAmount = (float) current / (float) maximum;
@@ -75,16 +68,15 @@ public class SusBar : MonoBehaviour
             }
           
     }
-        
-    
 
     void decrementFill()
     {
         current = (float)current - 1f;
-        GetCurrentFill();
         if(current <= 0)
         {
-            current =0;
+            current = 0;
         }
+        GetCurrentFill();
+       
     }
 }
