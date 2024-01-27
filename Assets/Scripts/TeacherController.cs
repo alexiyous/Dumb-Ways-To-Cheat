@@ -39,6 +39,10 @@ public class TeacherController : MonoBehaviour
     private bool shouldWait = false;
     private State currentState;
 
+    public int NextRouteIndex => nextRouteIndex;
+    public List<Transform> RoutesPosition => routesPosition;
+    public bool ShouldWait => shouldWait;  
+
     private void Start()
     {
         currentRouteIndex = Random.value > 0.5f ? 0 : 2;

@@ -15,7 +15,7 @@ public class SuspiciousBar : MonoBehaviour
 
         if (hookProgress >= 1f)
         {
-            GameManager.instance.Win();
+            GameManager.instance.Lose();
         }
     }
 

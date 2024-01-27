@@ -10,6 +10,7 @@ public class LegTableCheat : MonoBehaviour
     [SerializeField] private Image fillBar;
     [SerializeField] private float fillSpeed = 5f;
     private bool showBar = true;
+    private bool cheatFlag = false;
 
     private float timeElapsed;
     private float timeBarElapsed;
@@ -39,6 +40,7 @@ public class LegTableCheat : MonoBehaviour
             if (timeElapsed < timeToFill)
             {
                 timeElapsed += Time.deltaTime;
+                GameManager.instance.isCheating = false;
             }
             else
             {
@@ -48,11 +50,17 @@ public class LegTableCheat : MonoBehaviour
                     showBar = false;
                 }
                 IncreaseBar();
-                GameManager.instance.isCheating = true;
+                cheatFlag = false;
             }
         }
         else
         {
+            if (!cheatFlag)
+            {
+                GameManager.instance.isCheating = false;
+                cheatFlag = true;
+            }
+
             if (!showBar)
             {
                 fillBackgroundBar.gameObject.SetActive(false);
@@ -60,7 +68,6 @@ public class LegTableCheat : MonoBehaviour
             }
             timeElapsed = 0;
             timeBarElapsed = 0f;
-            GameManager.instance.isCheating = false;
             currentFillAmount = fillBar.transform.localScale;
         }
 
@@ -86,6 +93,7 @@ public class LegTableCheat : MonoBehaviour
 
     private void IncreaseBar()
     {
+        GameManager.instance.isCheating = true;
         timeBarElapsed += Time.deltaTime;
         fillBar.transform.localScale = new Vector2(Mathf.Lerp(currentFillAmount.x, 1f, 
             timeBarElapsed / fillSpeed), currentFillAmount.y);
