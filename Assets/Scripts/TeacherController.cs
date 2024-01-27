@@ -10,12 +10,22 @@ public class TeacherController : MonoBehaviour
     [SerializeField] private float moveSpeed = 1f;
     [FoldoutGroup("Move Config")]
     [SerializeField] private float moveDuration = 5f;
+    [FoldoutGroup("Move Config")]
     [SerializeField] private float waitTime = 1f;
+    [FoldoutGroup("Move Config")]
     [SerializeField] private float sizePerception = 1f;
+
+    [FoldoutGroup("Notif Config")]
+    [SerializeField] private GameObject notif;
+    [FoldoutGroup("Notif Config")]
+    [SerializeField] private float speed = 1f;
+    [FoldoutGroup("Notif Config")]
+    [SerializeField] private float range = 1f;
 
     private Vector2 originScale = Vector2.one;
     private Vector2 initialScale;
     private Vector2 initialPosition;
+    private Vector2 notifOriginPosition;
     private float moveCounter;
     private float waitCounter;
     private int currentRouteIndex = 0;
@@ -29,6 +39,7 @@ public class TeacherController : MonoBehaviour
         currentRouteIndex = Random.Range(0, routesPosition.Count);
         transform.position = routesPosition[currentRouteIndex].position;
         originScale = transform.localScale;
+        notifOriginPosition = notif.transform.position;
     }
 
     private void Update()
@@ -49,7 +60,9 @@ public class TeacherController : MonoBehaviour
                     transform.localScale = originScale;
                     initialScale = transform.localScale;
                     initialPosition = transform.position;
-                    nextRouteIndex = Random.value > 0.5f ? 1 : 2;
+                    var indexArray = new int[] { 1, 2, 4 };
+                    var index = Random.Range(0, indexArray.Length);
+                    nextRouteIndex = indexArray[index];
                     shouldWait = Random.value > 0.5f ? true : false;
                     isCalculating = false;
 
@@ -61,6 +74,11 @@ public class TeacherController : MonoBehaviour
                 }
 
                 if (nextRouteIndex == 2)
+                {
+                    MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, false);
+                }
+
+                if (nextRouteIndex == 4)
                 {
                     MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, false);
                 }
@@ -91,7 +109,9 @@ public class TeacherController : MonoBehaviour
                     transform.localScale = originScale;
                     initialScale = transform.localScale;
                     initialPosition = transform.position;
-                    nextRouteIndex = Random.value > 0.5f ? 0 : 3;
+                    var indexArray = new int[] { 0, 4, 3 };
+                    var index = Random.Range(0, indexArray.Length);
+                    nextRouteIndex = indexArray[index];
                     shouldWait = Random.value > 0.5f ? true : false;
                     isCalculating = false;
                 }
@@ -105,6 +125,11 @@ public class TeacherController : MonoBehaviour
                 {
                     MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, true);
                 }
+
+                if (nextRouteIndex == 4)
+                {
+                    MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, false);
+                }
                 break;
 
             case 3:
@@ -117,6 +142,29 @@ public class TeacherController : MonoBehaviour
                     nextRouteIndex = 2;
                     shouldWait = Random.value > 0.5f ? true : false;
                     isCalculating = false;
+                }
+
+                if (nextRouteIndex == 2)
+                {
+                    MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, false);
+                }
+                break;
+
+            case 4:
+                if (isCalculating)
+                {
+                    currentState = State.Move;
+                    transform.localScale = originScale;
+                    initialScale = transform.localScale;
+                    initialPosition = transform.position;
+                    nextRouteIndex = Random.value > 0.5f ? 0 : 2;
+                    shouldWait = Random.value > 0.5f ? true : false;
+                    isCalculating = false;
+                }
+
+                if (nextRouteIndex == 0)
+                {
+                    MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, false);
                 }
 
                 if (nextRouteIndex == 2)
@@ -144,7 +192,7 @@ public class TeacherController : MonoBehaviour
             DecreaseSize(moveCounter / moveDuration, initialScale);
         }
 
-        if (moveCounter / moveDuration >= 1f)
+        if (moveCounter / moveDuration > 1f)
         {
             currentState = State.Idle;
             Debug.Log("Move to next route");
@@ -155,13 +203,17 @@ public class TeacherController : MonoBehaviour
             {
                 isCalculating = true;
                 moveCounter = 0f;
+                notif.transform.position = new Vector2(notif.transform.position.x, transform.position.y + notifOriginPosition.y);
                 currentRouteIndex = nextRouteIndex;
+                shouldWait = false;
             }
             else if (!wait)
             {
                 isCalculating = true;
                 moveCounter = 0f;
+                notif.transform.position = new Vector2(notif.transform.position.x, transform.position.y + notifOriginPosition.y);
                 currentRouteIndex = nextRouteIndex;
+                shouldWait = false;
             }
            
         }
@@ -184,12 +236,21 @@ public class TeacherController : MonoBehaviour
         if (waitCounter >= waitTime)
         {
             waitCounter = 0f;
+            notif.SetActive(false);
             return true;
         }
         else
         {
+            notif.SetActive(true);
+            NotifMovement();
             return false;
         }
+    }
+
+    private void NotifMovement()
+    {
+        float yPos = Mathf.PingPong(Time.time * speed, 1) * range;
+        notif.transform.position = new Vector3(notif.transform.position.x, transform.position.y + yPos, notif.transform.position.z);
     }
 
     private enum State
