@@ -48,6 +48,7 @@ public class LegTableCheat : MonoBehaviour
                     showBar = false;
                 }
                 IncreaseBar();
+                GameManager.instance.isCheating = true;
             }
         }
         else
@@ -59,6 +60,7 @@ public class LegTableCheat : MonoBehaviour
             }
             timeElapsed = 0;
             timeBarElapsed = 0f;
+            GameManager.instance.isCheating = false;
             currentFillAmount = fillBar.transform.localScale;
         }
     }

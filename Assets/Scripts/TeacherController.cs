@@ -16,6 +16,8 @@ public class TeacherController : MonoBehaviour
     [SerializeField] private float sizePerception = 1f;
     [FoldoutGroup("Move Config")]
     [SerializeField] private SpriteRenderer sprite;
+    [FoldoutGroup("Move Config")]
+    public bool isDetecting = false;
 
     [FoldoutGroup("Notif Config")]
     [SerializeField] private GameObject notif;
@@ -253,11 +255,13 @@ public class TeacherController : MonoBehaviour
         if (waitCounter >= waitTime)
         {
             waitCounter = 0f;
+            isDetecting = false;
             notif.SetActive(false);
             return true;
         }
         else
         {
+            isDetecting = true;
             notif.SetActive(true);
             if (!(nextRouteIndex == 1 || nextRouteIndex == 3))
             {
