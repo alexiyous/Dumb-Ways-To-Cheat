@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class TeacherController : MonoBehaviour
 {
+    [SerializeField] private Animator anim;
+
     [ListDrawerSettings(ShowIndexLabels = true)]
     [SerializeField] private List<Transform> routesPosition = new List<Transform>();
     [FoldoutGroup("Move Config")]
@@ -39,8 +41,8 @@ public class TeacherController : MonoBehaviour
     private bool shouldWait = false;
     private State currentState;
 
+    public float MoveDuration => moveDuration;  
     public int NextRouteIndex => nextRouteIndex;
-    public List<Transform> RoutesPosition => routesPosition;
     public bool ShouldWait => shouldWait;  
 
     private void Start()
@@ -66,6 +68,7 @@ public class TeacherController : MonoBehaviour
             case 0:
                 if (isCalculating)
                 {
+
                     currentState = State.Move;
                     transform.localScale = originScale;
                     initialScale = transform.localScale;
@@ -81,16 +84,31 @@ public class TeacherController : MonoBehaviour
                 if (nextRouteIndex == 1)
                 {
                     MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, true, true);
+                    anim.SetBool("idle to front", true);
+                    anim.SetBool("idle to back", false);
+                    anim.SetBool("front to back", false);
+                    anim.SetBool("back to front", false);
+                    anim.SetBool("idle", false);
                 }
 
                 if (nextRouteIndex == 2)
                 {
                     MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, false);
+                    anim.SetBool("idle to front", true);
+                    anim.SetBool("idle to back", false);
+                    anim.SetBool("front to back", false);
+                    anim.SetBool("back to front", false);
+                    anim.SetBool("idle", false);
                 }
 
                 if (nextRouteIndex == 4)
                 {
                     MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, false);
+                    anim.SetBool("idle to front", true);
+                    anim.SetBool("idle to back", false);
+                    anim.SetBool("front to back", false);
+                    anim.SetBool("back to front", false);
+                    anim.SetBool("idle", false);
                 }
                 break;
 
@@ -109,6 +127,11 @@ public class TeacherController : MonoBehaviour
                 if (nextRouteIndex == 0)
                 {
                     MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, false, true);
+                    anim.SetBool("idle to front", true);
+                    anim.SetBool("idle to back", false);
+                    anim.SetBool("front to back", false);
+                    anim.SetBool("back to front", false);
+                    anim.SetBool("idle", false);
                 }
                 break;
 
@@ -129,16 +152,31 @@ public class TeacherController : MonoBehaviour
                 if (nextRouteIndex == 0)
                 {
                     MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, false);
+                    anim.SetBool("idle to front", true);
+                    anim.SetBool("idle to back", false);
+                    anim.SetBool("front to back", false);
+                    anim.SetBool("back to front", false);
+                    anim.SetBool("idle", false);
                 }
 
                 if (nextRouteIndex == 3)
                 {
                     MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, true, true);
+                    anim.SetBool("idle to front", true);
+                    anim.SetBool("idle to back", false);
+                    anim.SetBool("front to back", false);
+                    anim.SetBool("back to front", false);
+                    anim.SetBool("idle", false);
                 }
 
                 if (nextRouteIndex == 4)
                 {
                     MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, false);
+                    anim.SetBool("idle to front", false);
+                    anim.SetBool("idle to back", false);
+                    anim.SetBool("front to back", false);
+                    anim.SetBool("back to front", true);
+                    anim.SetBool("idle", false);
                 }
                 break;
 
@@ -157,6 +195,11 @@ public class TeacherController : MonoBehaviour
                 if (nextRouteIndex == 2)
                 {
                     MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, false, true);
+                    anim.SetBool("idle to front", true);
+                    anim.SetBool("idle to back", false);
+                    anim.SetBool("front to back", false);
+                    anim.SetBool("back to front", false);
+                    anim.SetBool("idle", false);
                 }
                 break;
 
@@ -175,11 +218,21 @@ public class TeacherController : MonoBehaviour
                 if (nextRouteIndex == 0)
                 {
                     MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, false);
+                    anim.SetBool("idle to front", true);
+                    anim.SetBool("idle to back", false);
+                    anim.SetBool("front to back", false);
+                    anim.SetBool("back to front", false);
+                    anim.SetBool("idle", false);
                 }
 
                 if (nextRouteIndex == 2)
                 {
                     MoveToTargetOnState(nextRouteIndex, initialPosition, initialScale, shouldWait, false);
+                    anim.SetBool("idle to front", true);
+                    anim.SetBool("idle to back", false);
+                    anim.SetBool("front to back", false);
+                    anim.SetBool("back to front", false);
+                    anim.SetBool("idle", false);
                 }
                 break;
         }
@@ -271,6 +324,11 @@ public class TeacherController : MonoBehaviour
             {
 
                 NotifMovement();
+                anim.SetBool("idle to front", false);
+                anim.SetBool("idle to back", false);
+                anim.SetBool("front to back", false);
+                anim.SetBool("back to front", false);
+                anim.SetBool("idle", true);
             }
             return false;
         }
